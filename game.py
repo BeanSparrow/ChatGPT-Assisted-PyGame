@@ -8,6 +8,7 @@ from player import Player
 from bullet import Bullet
 from enemy import Enemy
 from main_menu import create_main_menu
+from main_menu import create_weapon_selection_menu
 from game_over_screen import GameOverScreen
 from health_bar import HealthBar
 #endregion
@@ -113,8 +114,8 @@ class Game:
             if event.type == enemyHit:
                 for bullet, enemies in self.enemy_collisions.items():
                     for enemy in enemies:
-                        enemy.take_damage(1)
-                        if enemy.health <= 0:
+                        enemy.take_damage(self.player.weapon.damage)
+                        if enemy.current_health <= 0:
                             self.score += 1
                             enemy.kill()
                 self.enemy_hit = False
@@ -162,7 +163,7 @@ class Game:
     #region #### UPDATES ####
     def update(self):
         # Move and draw the enemy sprites
-        self.enemy_sprites.update(self.player.rect.centerx, self.player.rect.centery)
+        self.enemy_sprites.update(self.player.rect.centerx, self.player.rect.centery, self.screen)
         self.enemy_sprites.draw(self.screen)
 
         # Move and draw the bullets
@@ -177,8 +178,9 @@ class Game:
     def fireBulletUpdate(self):
         # Fire bullets only when the player is moving
         if self.player.began_moving:
-            bullet = Bullet(self.player.rect.centerx, self.player.rect.centery, self.player.direction)
-            self.bullet_sprites.add(bullet)
+            bullets = self.player.weapon.fire(self.player.rect.centerx, self.player.rect.centery, self.player.direction)
+            for bullet in bullets:
+                self.bullet_sprites.add(bullet)
 
     #endregion
 
@@ -218,7 +220,7 @@ class Game:
             
             # Auto-fire bullets
             self.fire_timer += clock.get_time()
-            if self.fire_timer >= self.fire_interval:
+            if self.fire_timer >= self.player.weapon.fire_interval:
                 self.fireBulletUpdate()
                 self.fire_timer = 0
 
@@ -235,9 +237,14 @@ if __name__ == "__main__":
 
     # Run the main menu loop until the player selects "Play Game" or "Quit"
     while True:
-        choice = create_main_menu(game)
+        play = create_main_menu(game)
 
         # If the player selects "Play Game," start the game loop
-        if choice == "play":
-            game.game_loop()
+        if play == "play":
+            weapon = create_weapon_selection_menu(game)
+            if weapon != "back":
+                game.player.set_weapon(weapon)
+                game.game_loop()
+            if weapon == "back":
+                continue
 #endregion

@@ -1,18 +1,24 @@
 import pygame
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction):
+    def __init__(self, x, y, direction, distance, size, speed):
         super().__init__()
-        self.speed = 2
+        
+        # Bullet Stats
+        self.speed = speed
         self.direction = direction
-        self.size = 5
+        self.size = size
+        self.max_distance = distance
+        self.distance_traveled = 0
+        
+        # Visual
         self.color = (255, 215, 0)
         self.image = pygame.surface.Surface((self.size, self.size))
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
+        
+        # Position
         self.rect.center = (x, y)
-        self.distance_traveled = 0
-        self.max_distance = 200
 
     def move(self):
         self.rect.centerx += self.direction[0] * self.speed

@@ -4,8 +4,7 @@ Rewards (Scales Player or Bullets)
 
 Weapon Class (Changes Bullet Functionality)
 
-Add health to Enemies
-add damage to Bullets
+Add Pierce as a stat to weapons to pass to bullet
 
 Stretch goals:
 

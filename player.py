@@ -1,6 +1,8 @@
 import pygame
-import math
-from bullet import Bullet
+from weapon import Weapon
+from weapon import Pistol
+from weapon import MachineGun
+from weapon import Shotgun
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, screen_width, screen_height):
@@ -12,6 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 2
         self.speed = 5
         self.is_dead = False
+        self.weapon = Weapon()
         
         # Player Sprite
         self.picture_path = "Assets\Img\Player\player_test.png"
@@ -23,6 +26,8 @@ class Player(pygame.sprite.Sprite):
         # Player Facing Direction
         self.direction = (0, 0)  # (dx, dy)
         self.began_moving = False  # Flag to track if the player is moving
+
+
         
     def move(self, dx, dy):
         # Calculate the new positions for each point of the triangle
@@ -34,6 +39,14 @@ class Player(pygame.sprite.Sprite):
         # Player has started moving, so set the flag to True
         self.began_moving = True
     
+    def set_weapon(self, weapon):
+        if weapon == "Pistol":
+            self.weapon = Pistol()
+        elif weapon == "Machine Gun":
+            self.weapon = MachineGun()
+        elif weapon == "Shotgun":
+            self.weapon = Shotgun()
+
     def take_damage(self, damage):
         self.health -= damage
         if self.health <= 0:
