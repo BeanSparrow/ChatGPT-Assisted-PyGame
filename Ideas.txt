@@ -1,0 +1,18 @@
+Levels (Scales Enemies)
+
+Rewards (Scales Player or Bullets)
+
+Weapon Class (Changes Bullet Functionality)
+
+Add health to Enemies
+add damage to Bullets
+
+Stretch goals:
+
+If Level design:
+    Different Backgrounds
+    Different Obstacles
+
+If Continuous Design:
+    Background to move and the player stays in the center
+    Enemies move closer to player as player moves in their direction
