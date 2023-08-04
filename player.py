@@ -8,6 +8,7 @@ class Player(pygame.sprite.Sprite):
         
         # Player Stats
         self.size = 60
+        self.max_health = 10
         self.health = 2
         self.speed = 5
         self.is_dead = False

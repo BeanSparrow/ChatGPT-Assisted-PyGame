@@ -9,6 +9,7 @@ from bullet import Bullet
 from enemy import Enemy
 from main_menu import create_main_menu
 from game_over_screen import GameOverScreen
+from health_bar import HealthBar
 #endregion
 
 #region #### PYGAME INITIALIZE ####
@@ -50,13 +51,17 @@ class Game:
         self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT)
         self.player_group.add(self.player)
 
+        # Create the Health Bar Object
+        self.health_bar = HealthBar(self.screen, self.player)
+
+        # Create the enemy sprite group
         self.enemy_sprites = pygame.sprite.Group()
         self.max_enemies = 5  # The maximum number of enemies to create
         self.enemies_spawned = 0  # The number of enemies that have been spawned
         
         # Store Bullets
         self.bullet_sprites = pygame.sprite.Group()
-        
+
         # Timer for auto-firing bullets
         self.fire_timer = 0
         self.fire_interval = 1000  # 1000 milliseconds = 1 second
@@ -184,6 +189,9 @@ class Game:
 
         # Draw the player
         self.player_group.draw(self.screen)
+
+        # Draw the health bar
+        self.health_bar.draw()
 
         # Collision Check
         self.collision_check()
