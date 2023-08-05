@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 2
         self.speed = 5
         self.is_dead = False
-        self.weapon = Weapon()
+        self.weapon = Pistol()
         
         # Player Sprite
         self.picture_path = "Assets\Img\Player\player_test.png"
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
     def set_weapon(self, weapon):
         if weapon == "Pistol":
             self.weapon = Pistol()
-        elif weapon == "Machine Gun":
+        elif weapon == "MachineGun":
             self.weapon = MachineGun()
         elif weapon == "Shotgun":
             self.weapon = Shotgun()
@@ -51,3 +51,8 @@ class Player(pygame.sprite.Sprite):
         self.health -= damage
         if self.health <= 0:
             self.is_dead = True
+
+    def reset(self):
+        self.health = self.max_health
+        self.is_dead = False
+        self.weapon = Pistol()

@@ -80,3 +80,48 @@ def create_weapon_selection_menu(self):
             return "Shotgun"
         elif back_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
             return "back"
+        
+def show_game_over_screen(screen, width, height):
+    font = pygame.font.Font(None, 36)
+    button_width = 120
+    button_height = 50
+    button_radius = 10
+    button_depth = 8
+    restart_button = pygame.Rect(width / 2 - button_width / 2, height / 2 + 100, button_width, button_height)
+    quit_button = pygame.Rect(width / 2 - button_width / 2, height / 2 + 300, button_width, button_height)
+    game_over_text = font.render("Game Over", True, (255, 0, 0))
+    restart_text = font.render("Restart", True, (0, 0, 0))
+    quit_text = font.render("Quit", True, (0, 0, 0))
+
+    screen.fill((255, 0, 0))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button.collidepoint(pygame.mouse.get_pos()):
+                    return "restart"
+                elif quit_button.collidepoint(pygame.mouse.get_pos()):
+                    pygame.quit()
+                    quit()
+
+        screen.fill((0, 0, 0))
+        screen.blit(game_over_text, (width // 2 - 50, height // 2 - 100))
+
+        # Draw restart button
+        pygame.draw.rect(screen, (150, 150, 150), restart_button)
+        pygame.draw.rect(screen, (100, 100, 100), restart_button.inflate(-button_depth, -button_depth))
+        pygame.draw.rect(screen, (200, 200, 200), restart_button.move(button_depth, button_depth))
+        pygame.draw.rect(screen, (0, 255, 0), restart_button, border_radius=button_radius)
+        screen.blit(restart_text, (width / 2 - 50, height / 2 + 100))
+
+        # Draw quit button
+        pygame.draw.rect(screen, (150, 150, 150), quit_button)
+        pygame.draw.rect(screen, (100, 100, 100), quit_button.inflate(-button_depth, -button_depth))
+        pygame.draw.rect(screen, (200, 200, 200), quit_button.move(button_depth, button_depth))
+        pygame.draw.rect(screen, (255, 0, 0), quit_button, border_radius=button_radius)
+        screen.blit(quit_text, (width / 2 - 50, height / 2 + 300))
+
+        pygame.display.flip()

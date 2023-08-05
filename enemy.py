@@ -5,6 +5,8 @@ import random
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, width, height):
         super().__init__()
+        
+        # Enemy Stats
         self.picture_path = "Assets\Img\Enemy\Robot\Robot_move_right.png"
         self.size = 60
         self.radius = self.size // 2

@@ -5,17 +5,26 @@ import sys
 import math
 import random
 from player import Player
-from bullet import Bullet
 from enemy import Enemy
-from main_menu import create_main_menu
-from main_menu import create_weapon_selection_menu
-from game_over_screen import GameOverScreen
+from menus import create_main_menu
+from menus import create_weapon_selection_menu
+from menus import show_game_over_screen
 from health_bar import HealthBar
 #endregion
 
 #region #### PYGAME INITIALIZE ####
 # Initialize Pygame
 pygame.init()
+
+def initialize_game(game):
+    # Reset player and enemy states
+    game.player.reset()
+    game.enemy_sprites.empty()
+    game.bullet_sprites.empty()
+    game.score = 0
+    game.enemies_spawned = 0
+    game.game_over_condition = False
+    # Other reset logic can be added here as needed
 
 #endregion
 
@@ -67,15 +76,15 @@ class Game:
         self.fire_timer = 0
         self.fire_interval = 1000  # 1000 milliseconds = 1 second
 
-        # Game over screen
-        self.game_over_screen = GameOverScreen(self.screen, self.screen_width, self.screen_height)
-
         # Collision Event
         self.enemy_hit = False
         self.player_hit = False
         self.enemy_collisions = {}  # Dictionary to store enemy collisions
         self.player_collisions = {}  # Dictionary to store player collisions
         
+        #Game Over Condition
+        self.game_over_condition = False
+
         #Score Counter
         self.score = 0
 
@@ -107,9 +116,7 @@ class Game:
                 self.quit_game()
             # End Game on Player Death    
             if event.type == playerDeath:
-                self.game_over_screen.show_game_over()
-                pygame.time.wait(3000)  # Wait for 3 seconds before quitting
-                self.quit_game()
+                self.game_over_condition = True
             # Handle Enemy Hit
             if event.type == enemyHit:
                 for bullet, enemies in self.enemy_collisions.items():
@@ -214,6 +221,7 @@ class Game:
         # Main game loop
         clock = pygame.time.Clock()
         while True:
+            clock.tick(60)  # Limit frame rate to 60 FPS
             self.handle_events()
             self.handle_enemy_spawning()
             self.draw()
@@ -223,8 +231,15 @@ class Game:
             if self.fire_timer >= self.player.weapon.fire_interval:
                 self.fireBulletUpdate()
                 self.fire_timer = 0
+            
+            if self.game_over_condition:
+                restart_choice = show_game_over_screen(self.screen, self.screen_width, self.screen_height)
+                if restart_choice == "restart":
+                    initialize_game(self)
+                    return "restart"
+                else:
+                    break
 
-            clock.tick(60)  # Limit frame rate to 60 FPS
     #endregion
     
     #endregion
@@ -234,17 +249,19 @@ class Game:
 
 if __name__ == "__main__":
     game = Game()
-
     # Run the main menu loop until the player selects "Play Game" or "Quit"
     while True:
         play = create_main_menu(game)
 
         # If the player selects "Play Game," start the game loop
         if play == "play":
-            weapon = create_weapon_selection_menu(game)
-            if weapon != "back":
-                game.player.set_weapon(weapon)
-                game.game_loop()
-            if weapon == "back":
-                continue
+            while True:
+                weapon = create_weapon_selection_menu(game)
+                if weapon != "back":
+                    game.player.set_weapon(weapon)
+                    result = game.game_loop()
+                    if result != "restart":
+                        break
+                else:
+                    break
 #endregion
