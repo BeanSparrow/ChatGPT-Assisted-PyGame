@@ -10,6 +10,7 @@ class Player(pygame.sprite.Sprite):
         
         # Player Stats
         self.size = 60
+        self.experience = 0
         self.max_health = 10
         self.health = 2
         self.speed = 5
@@ -19,9 +20,18 @@ class Player(pygame.sprite.Sprite):
         # Player Sprite
         self.picture_path = "Assets\Img\Player\player_test.png"
         self.image = pygame.image.load(self.picture_path).convert_alpha()
+
+        # Left and Right Walking Images
+        self.images_left = [pygame.image.load('Assets\Img\Player\player_left1.png'), pygame.image.load('Assets\Img\Player\player_left2.png')]
+        self.images_right = [pygame.transform.flip(image, True, False) for image in self.images_left]
+
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
         self.rect = self.image.get_rect()
         self.rect.center = (screen_width // 2, screen_height // 2)
+
+        # Animation Counter
+        self.current_image = 0
+        self.move_counter = 0
         
         # Player Facing Direction
         self.direction = (0, 0)  # (dx, dy)
@@ -38,6 +48,17 @@ class Player(pygame.sprite.Sprite):
 
         # Player has started moving, so set the flag to True
         self.began_moving = True
+
+        if self.move_counter >= 10:
+            self.move_counter = 0
+            self.current_image = (self.current_image + 1) % len(self.images_left)
+        
+        if dx < 0:
+            self.image = pygame.transform.scale(self.images_left[self.current_image], (self.size, self.size))
+        elif dx > 0:
+            self.image = pygame.transform.scale(self.images_right[self.current_image], (self.size, self.size))
+    
+        self.move_counter += 1
     
     def set_weapon(self, weapon):
         if weapon == "Pistol":

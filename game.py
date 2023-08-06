@@ -6,10 +6,15 @@ import math
 import random
 from player import Player
 from enemy import Enemy
+from exp_coin import EXPCoin
 from menus import create_main_menu
 from menus import create_weapon_selection_menu
 from menus import show_game_over_screen
+from menus import show_pause_menu
+from hud import draw_score
+from hud import draw_timer
 from health_bar import HealthBar
+from settings import Settings
 #endregion
 
 #region #### PYGAME INITIALIZE ####
@@ -21,9 +26,11 @@ def initialize_game(game):
     game.player.reset()
     game.enemy_sprites.empty()
     game.bullet_sprites.empty()
-    game.score = 0
-    game.enemies_spawned = 0
-    game.game_over_condition = False
+    game.exp_coins_sprites.empty()
+    game.settings.score = 0
+    game.settings.game_over_condition = False
+    game.settings.total_game_time = 0
+    game.settings.paused = False
     # Other reset logic can be added here as needed
 
 #endregion
@@ -32,6 +39,7 @@ def initialize_game(game):
 playerDeath = pygame.USEREVENT + 1
 enemyHit = pygame.USEREVENT + 2
 playerHit = pygame.USEREVENT + 3
+expPickup = pygame.USEREVENT +  4
 #endregion
 
 #region #### GLOBAL SETTINGS ####
@@ -42,35 +50,36 @@ SCREEN_WIDTH, SCREEN_HEIGHT = pygame.display.Info().current_w, pygame.display.In
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GRAY = (128, 128, 128)
+BLACK = (0, 0, 0)
 #endregion
 
 #region #### GAME CLASS ####
 class Game:
     #region #### GAME INITIALIZATION ####
     def __init__(self):
-        # Set up the display settings
-        self.screen_width = SCREEN_WIDTH
-        self.screen_height = SCREEN_HEIGHT
+        # Creating Settings
+        self.settings = Settings(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Set up the display in fullscreen mode
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        pygame.display.set_caption("Untitled Hored Shooter")
+        pygame.display.set_caption("Untitled Hoard Shooter")
 
-        # Create the player and enemy objects
+        # Create the player
         self.player_group = pygame.sprite.Group()
-        self.player = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.player = Player(self.settings.screen_width // 2, self.settings.screen_height // 2, self.settings.screen_width, self.settings.screen_height)
         self.player_group.add(self.player)
 
         # Create the Health Bar Object
         self.health_bar = HealthBar(self.screen, self.player)
 
-        # Create the enemy sprite group
+        # Store Enemies
         self.enemy_sprites = pygame.sprite.Group()
-        self.max_enemies = 5  # The maximum number of enemies to create
-        self.enemies_spawned = 0  # The number of enemies that have been spawned
         
         # Store Bullets
         self.bullet_sprites = pygame.sprite.Group()
+
+        # Store Exp Coins
+        self.exp_coins_sprites = pygame.sprite.Group()
 
         # Timer for auto-firing bullets
         self.fire_timer = 0
@@ -79,26 +88,23 @@ class Game:
         # Collision Event
         self.enemy_hit = False
         self.player_hit = False
+        self.player_gained_exp = False
         self.enemy_collisions = {}  # Dictionary to store enemy collisions
         self.player_collisions = {}  # Dictionary to store player collisions
-        
-        #Game Over Condition
-        self.game_over_condition = False
-
-        #Score Counter
-        self.score = 0
+        self.exp_pickup_collision = {} # Dictionary to store XP Collisions
 
     #endregion
     
     #region #### GAME METHODS ####
     #region #### EVENT HANDLING ####
-    def handle_enemy_spawning(self):
+    def handle_enemy_spawning(self, dt):
         # Check if it's time to spawn a new enemy
-        if self.enemies_spawned < self.max_enemies:
-            enemy = Enemy(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.settings.enemy_timer += dt
+        if self.settings.enemy_timer >= self.settings.enemy_interval and len(self.enemy_sprites.sprites()) < self.settings.max_enemies:
+            enemy = Enemy(self.settings.screen_width, self.settings.screen_height)
             enemy.set_initial_position()
+            self.settings.enemy_timer = 0
             self.enemy_sprites.add(enemy)
-            self.enemies_spawned += 1
     
     def handle_events(self):
         # Custom Events
@@ -108,6 +114,11 @@ class Game:
             pygame.event.post(pygame.event.Event(enemyHit))
         if self.player_hit:
             pygame.event.post(pygame.event.Event(playerHit))
+        if self.player_gained_exp:
+            pygame.event.post(pygame.event.Event(expPickup))
+        
+        # Get Current Time
+        current_time = pygame.time.get_ticks()
         
         # Event handling
         for event in pygame.event.get():
@@ -116,14 +127,16 @@ class Game:
                 self.quit_game()
             # End Game on Player Death    
             if event.type == playerDeath:
-                self.game_over_condition = True
+                self.settings.game_over_condition = True
             # Handle Enemy Hit
             if event.type == enemyHit:
                 for bullet, enemies in self.enemy_collisions.items():
                     for enemy in enemies:
                         enemy.take_damage(self.player.weapon.damage)
                         if enemy.current_health <= 0:
-                            self.score += 1
+                            self.settings.score += 1
+                            exp_coin = EXPCoin(enemy.rect.centerx, enemy.rect.centery)
+                            self.exp_coins_sprites.add(exp_coin)
                             enemy.kill()
                 self.enemy_hit = False
                 self.enemy_collisions = {}
@@ -135,11 +148,18 @@ class Game:
                         enemy.kill()
                 self.player_hit = False
                 self.player_collisions = {}
+            # Handle EXP Pickup
+            if event.type == expPickup:
+                for player, exp_coins in self.exp_pickup_collision.items():
+                    for exp in exp_coins:
+                        exp.kill()
+                        player.experience += 1
 
         # Keyboard input handling
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            self.quit_game()
+        if keys[pygame.K_ESCAPE] and current_time - self.settings.last_pause_time >= self.settings.pause_cooldown:
+            self.settings.paused = not self.settings.paused  # Toggle the pause state
+            self.settings.last_pause_time = current_time  # Update the last key time
         if keys[pygame.K_w]:
             self.player.move(0, -self.player.speed)
         if keys[pygame.K_s]:
@@ -165,6 +185,11 @@ class Game:
         if player_collision:
             self.player_hit = True
             self.player_collisions = player_collision
+
+        exp_pickup_collision = pygame.sprite.groupcollide(self.player_group, self.exp_coins_sprites, False, False)
+        if exp_pickup_collision:
+            self.player_gained_exp = True
+            self.exp_pickup_collision = exp_pickup_collision
     #endregion
     
     #region #### UPDATES ####
@@ -177,9 +202,16 @@ class Game:
         self.bullet_sprites.update()
         self.bullet_sprites.draw(self.screen)
 
+        # Draw Exp Coins
+        self.exp_coins_sprites.draw(self.screen)
+
         for bullet in self.bullet_sprites:
             if bullet.distance_traveled >= bullet.max_distance:
                 bullet.kill()
+
+        draw_score(game)
+        draw_timer(game)
+
 
 
     def fireBulletUpdate(self):
@@ -194,7 +226,7 @@ class Game:
     #region #### DRAWING ####
     def draw(self):
         # Fill the screen with white
-        self.screen.fill(GRAY)
+        self.screen.fill(BLACK)
 
         # Draw the player
         self.player_group.draw(self.screen)
@@ -207,11 +239,6 @@ class Game:
         # Update Game State
         self.update()
 
-        # Draw the score on the top left corner
-        font = pygame.font.Font(None, 72)
-        score_text = font.render(f"Score: {self.score}", True, WHITE)
-        self.screen.blit(score_text, (10, 10))  # Display score at (10, 10)
-
         # Update the display
         pygame.display.flip()
     #endregion
@@ -221,24 +248,35 @@ class Game:
         # Main game loop
         clock = pygame.time.Clock()
         while True:
-            clock.tick(60)  # Limit frame rate to 60 FPS
+            dt = clock.tick(60)  # Limit frame rate to 60 FPS
             self.handle_events()
-            self.handle_enemy_spawning()
-            self.draw()
             
-            # Auto-fire bullets
-            self.fire_timer += clock.get_time()
-            if self.fire_timer >= self.player.weapon.fire_interval:
-                self.fireBulletUpdate()
-                self.fire_timer = 0
-            
-            if self.game_over_condition:
-                restart_choice = show_game_over_screen(self.screen, self.screen_width, self.screen_height)
-                if restart_choice == "restart":
+            if not self.settings.paused:
+                self.settings.total_game_time += dt
+                self.handle_enemy_spawning(dt)
+                self.draw()
+                
+                # Auto-fire bullets
+                self.settings.fire_timer += clock.get_time()
+                if self.settings.fire_timer >= self.player.weapon.fire_interval:
+                    self.fireBulletUpdate()
+                    self.settings.fire_timer = 0
+                
+                if self.settings.game_over_condition:
+                    restart_choice = show_game_over_screen(self.screen, self.settings.screen_width, self.settings.screen_height)
+                    if restart_choice == "restart":
+                        initialize_game(self)
+                        return "restart"
+                    else:
+                        break
+            else:
+                pause_restart_choice = show_pause_menu(game)
+                if pause_restart_choice == "restart":
                     initialize_game(self)
                     return "restart"
-                else:
-                    break
+
+                
+
 
     #endregion
     

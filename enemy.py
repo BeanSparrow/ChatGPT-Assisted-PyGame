@@ -7,17 +7,41 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         
         # Enemy Stats
-        self.picture_path = "Assets\Img\Enemy\Robot\Robot_move_right.png"
         self.size = 60
         self.radius = self.size // 2
-        self.image = pygame.image.load(self.picture_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.size, self.size))
-        self.rect = self.image.get_rect(center=(width // 2, height // 2))
         self.speed = 1
-        self.screen_width = width
-        self.screen_height = height
         self.current_health = 20
         self.max_health = 20
+        
+        # Animation Values
+        self.tick_count = 0
+        self.switch_interval = 30 
+        
+        #  Screen Stats
+        self.screen_width = width
+        self.screen_height = height
+        
+        # Load multiple sprites for different directions
+        self.image_left1 = pygame.transform.scale(pygame.image.load("Assets\Img\Enemy\Robot\\robot_move_left.png").convert_alpha(), (self.size, self.size))
+        self.image_left2 = pygame.transform.scale(pygame.image.load("Assets\Img\Enemy\Robot\\robot_move_left_extend.png").convert_alpha(), (self.size, self.size))
+        self.image_up1 = pygame.transform.scale(pygame.image.load("Assets\Img\Enemy\Robot\\robot_left_updown.png").convert_alpha(), (self.size, self.size))
+        self.image_up2 = pygame.transform.scale(pygame.image.load("Assets\Img\Enemy\Robot\\robot_left_updown_extend.png").convert_alpha(), (self.size, self.size))
+        
+         # Create sprites for right and down directions by flipping the left and up sprites
+        self.image_right1 = pygame.transform.flip(self.image_left1, True, False)
+        self.image_right2 = pygame.transform.flip(self.image_left2, True, False)
+        self.image_down1 = pygame.transform.flip(self.image_up1, True, False)
+        self.image_down2 = pygame.transform.flip(self.image_up2, True, False)
+        
+         # Start with default images
+        self.image_right = self.image_right1
+        self.image_left = self.image_left1
+        self.image_up = self.image_up1
+        self.image_down = self.image_down1
+        self.image = self.image_right
+        
+        self.rect = self.image.get_rect(center=(width // 2, height // 2))
+
 
     def set_initial_position(self):
         # Choose a random side of the screen (0=top, 1=right, 2=bottom, 3=left)
@@ -40,6 +64,9 @@ class Enemy(pygame.sprite.Sprite):
         self.current_health -= damage
 
     def move(self, player_x, player_y):
+        old_centerx = self.rect.centerx
+        old_centery = self.rect.centery
+
         dx = player_x - self.rect.centerx
         dy = player_y - self.rect.centery
         distance_to_player = max(1, math.hypot(dx, dy))
@@ -48,6 +75,39 @@ class Enemy(pygame.sprite.Sprite):
 
         self.rect.centerx += dx * self.speed
         self.rect.centery += dy * self.speed
+
+        # Increment tick count
+        self.tick_count += 1
+        if self.tick_count >= self.switch_interval:
+            # Switch images
+            if self.image_right == self.image_right1:
+                self.image_right = self.image_right2
+                self.image_left = self.image_left2
+                self.image_up = self.image_up2
+                self.image_down = self.image_down2
+            else:
+                self.image_right = self.image_right1
+                self.image_left = self.image_left1
+                self.image_up = self.image_up1
+                self.image_down = self.image_down1
+
+            # Reset tick count
+            self.tick_count = 0
+
+        # Determine direction based on old and new positions
+        delta_x = self.rect.centerx - old_centerx
+        delta_y = self.rect.centery - old_centery
+
+        if abs(delta_x) > abs(delta_y):  # Moving more horizontally than vertically
+            if delta_x > 0:  # Moving right
+                self.image = self.image_right
+            else:  # Moving left
+                self.image = self.image_left
+        else:  # Moving more vertically than horizontally
+            if delta_y > 0:  # Moving down
+                self.image = self.image_down
+            else:  # Moving up
+                self.image = self.image_up
 
     def draw_health_bar(self, screen):
         padding = 10

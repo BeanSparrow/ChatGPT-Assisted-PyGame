@@ -15,3 +15,6 @@ If Level design:
 If Continuous Design:
     Background to move and the player stays in the center
     Enemies move closer to player as player moves in their direction
+
+
+Timer in top right

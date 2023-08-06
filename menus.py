@@ -11,8 +11,8 @@ def create_main_menu(self):
             self.screen.fill((128, 128, 128))
 
             # Draw the main menu buttons
-            play_button_rect = pygame.Rect(self.screen_width / 2, (self.screen_height / 2) - 100, 200, 50)
-            quit_button_rect = pygame.Rect(self.screen_width / 2, (self.screen_height / 2) + 100, 200, 50)
+            play_button_rect = pygame.Rect(self.settings.screen_width / 2, (self.settings.screen_height / 2) - 100, 200, 50)
+            quit_button_rect = pygame.Rect(self.settings.screen_width / 2, (self.settings.screen_height / 2) + 100, 200, 50)
 
             pygame.draw.rect(self.screen, (0, 255, 0), play_button_rect)
             pygame.draw.rect(self.screen, (255, 0, 0), quit_button_rect)
@@ -45,10 +45,10 @@ def create_weapon_selection_menu(self):
         self.screen.fill((128, 128, 128))
 
         # Draw the weapon selection buttons
-        pistol_button_rect = pygame.Rect(self.screen_width / 3, (self.screen_height / 3) - 100, 200, 50)
-        machinegun_button_rect = pygame.Rect(self.screen_width / 3, self.screen_height / 3, 200, 50)
-        shotgun_button_rect = pygame.Rect(self.screen_width / 3, (self.screen_height / 3) + 100, 200, 50)
-        back_button_rect = pygame.Rect(self.screen_width / 3, (self.screen_height / 3) + 200, 200, 50)
+        pistol_button_rect = pygame.Rect(self.settings.screen_width / 3, (self.settings.screen_height / 3) - 100, 200, 50)
+        machinegun_button_rect = pygame.Rect(self.settings.screen_width / 3, self.settings.screen_height / 3, 200, 50)
+        shotgun_button_rect = pygame.Rect(self.settings.screen_width / 3, (self.settings.screen_height / 3) + 100, 200, 50)
+        back_button_rect = pygame.Rect(self.settings.screen_width / 3, (self.settings.screen_height / 3) + 200, 200, 50)
 
         pygame.draw.rect(self.screen, (0, 255, 0), pistol_button_rect)
         pygame.draw.rect(self.screen, (0, 255, 0), machinegun_button_rect)
@@ -125,3 +125,49 @@ def show_game_over_screen(screen, width, height):
         screen.blit(quit_text, (width / 2 - 50, height / 2 + 300))
 
         pygame.display.flip()
+
+def show_pause_menu(game):
+    font = pygame.font.Font(None, 72)
+    button_width = 200
+    button_height = 50
+    button_radius = 10
+    restart_button = pygame.Rect(game.settings.screen_width / 2 - button_width / 2, game.settings.screen_height / 2 + 100, button_width, button_height)
+    quit_button = pygame.Rect(game.settings.screen_width / 2 - button_width / 2, game.settings.screen_height / 2 + 300, button_width, button_height)
+    restart_text = font.render("Restart", True, (0, 0, 0))
+    quit_text = font.render("Quit", True, (0, 0, 0))
+    
+    # Draw a semi-transparent overlay and a pause message
+    overlay = pygame.Surface((game.settings.screen_width, game.settings.screen_height)).convert()  # Create a new surface to use as an overlay
+    overlay.fill((0, 0, 0))  # Fill the overlay with black
+    overlay.set_alpha(200)  # Make the overlay semi-transparent
+    game.screen.blit(overlay, (0, 0))  # Draw the overlay onto the screen
+
+    # Draw the pause text
+    pause_text = font.render("Paused", True, (255, 255, 255))
+    pause_rect = pause_text.get_rect(center=(game.settings.screen_width // 2, game.settings.screen_height // 2))  # Center the pause text
+    game.screen.blit(pause_text, pause_rect)
+
+    # Draw restart button
+    pygame.draw.rect(game.screen, (0, 255, 0), restart_button, border_radius=button_radius)
+    game.screen.blit(restart_text, (game.settings.screen_width / 2 - 85, game.settings.screen_height / 2 + 100))
+
+    # Draw quit button
+    pygame.draw.rect(game.screen, (255, 0, 0), quit_button, border_radius=button_radius)
+    game.screen.blit(quit_text, (game.settings.screen_width / 2 - 55, game.settings.screen_height / 2 + 300))
+
+    while True:
+        game.handle_events()
+        if not game.settings.paused:  # Exit the pause menu loop if the game is no longer paused
+            return
+       
+        # Check for button clicks
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_click = pygame.mouse.get_pressed()
+
+        if restart_button.collidepoint(mouse_pos) and mouse_click[0]:
+            return "restart"
+        elif quit_button.collidepoint(mouse_pos) and mouse_click[0]:
+            pygame.quit()
+            sys.exit()
+
+        pygame.display.flip() # Update the Display
