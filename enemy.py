@@ -13,6 +13,7 @@ class Enemy(pygame.sprite.Sprite):
         self.current_health = 20
         self.max_health = 20
         self.score_value = 1
+        self.damage = 10
         
         # Animation Values
         self.tick_count = 0

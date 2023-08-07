@@ -13,7 +13,6 @@ from menus import show_game_over_screen
 from menus import show_pause_menu
 from hud import draw_score
 from hud import draw_timer
-from health_bar import HealthBar
 from settings import Settings
 #endregion
 
@@ -66,11 +65,8 @@ class Game:
 
         # Create the player
         self.player_group = pygame.sprite.Group()
-        self.player = Player(self.settings.screen_width // 2, self.settings.screen_height // 2, self.settings.screen_width, self.settings.screen_height)
+        self.player = Player(self.settings.screen_width, self.settings.screen_height, self.screen)
         self.player_group.add(self.player)
-
-        # Create the Health Bar Object
-        self.health_bar = HealthBar(self.screen, self.player)
 
         # Store Enemies
         self.enemy_sprites = pygame.sprite.Group()
@@ -141,8 +137,8 @@ class Game:
             # Handle Player Hit
             if event.type == playerHit:
                 for player, enemies in self.player_collisions.items():
-                    player.take_damage(1)
                     for enemy in enemies:
+                        player.take_damage(enemy.damage)
                         enemy.kill()
                 self.player_hit = False
                 self.player_collisions = {}
@@ -152,6 +148,8 @@ class Game:
                     for exp in exp_coins:
                         exp.kill()
                         player.experience += 1
+                self.player_gained_exp = False
+                self.exp_pickup_collision = {}
 
         # Keyboard input handling
         keys = pygame.key.get_pressed()
@@ -166,6 +164,13 @@ class Game:
             self.player.move(-self.player.speed, 0)
         if keys[pygame.K_d]:
             self.player.move(self.player.speed, 0)
+        # Debugging Events
+        if keys[pygame.K_1]:
+            self.player.get_heal(10)
+        if keys[pygame.K_2]:
+            self.player.take_damage(10)
+        if keys[pygame.K_3]:
+            print(self.player.experience)
 
     def quit_game(self):
         pygame.quit()
@@ -207,11 +212,13 @@ class Game:
         for bullet in self.bullet_sprites:
             if bullet.distance_traveled >= bullet.max_distance:
                 bullet.kill()
+        
+        # Draw and update the player
+        self.player_group.update()
+        self.player_group.draw(self.screen)
 
         draw_score(game)
         draw_timer(game)
-
-
 
     def fireBulletUpdate(self):
         # Fire bullets only when the player is moving
@@ -226,12 +233,6 @@ class Game:
     def draw(self):
         # Fill the screen with white
         self.screen.fill(BLACK)
-
-        # Draw the player
-        self.player_group.draw(self.screen)
-
-        # Draw the health bar
-        self.health_bar.draw()
 
         # Collision Check
         self.collision_check()
