@@ -59,7 +59,6 @@ class Shotgun(Weapon):
         self.bullet_distance = 0 # Random in Bullet Creation
         self.size = 4
         self.speed = 0 # Random in Bullet Creation
-        
 
     def fire(self, x, y, direction):     
         bullets = []

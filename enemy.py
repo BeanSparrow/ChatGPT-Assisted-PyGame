@@ -12,6 +12,7 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = 1
         self.current_health = 20
         self.max_health = 20
+        self.score_value = 1
         
         # Animation Values
         self.tick_count = 0
@@ -62,6 +63,11 @@ class Enemy(pygame.sprite.Sprite):
     
     def take_damage(self, damage):
         self.current_health -= damage
+        if self.current_health <= 0:
+            self.kill()
+            return True
+        else:
+            return False
 
     def move(self, player_x, player_y):
         old_centerx = self.rect.centerx

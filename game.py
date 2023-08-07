@@ -57,12 +57,12 @@ BLACK = (0, 0, 0)
 class Game:
     #region #### GAME INITIALIZATION ####
     def __init__(self):
-        # Creating Settings
-        self.settings = Settings(SCREEN_WIDTH, SCREEN_HEIGHT)
-
         # Set up the display in fullscreen mode
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         pygame.display.set_caption("Untitled Hoard Shooter")
+
+        # Creating Settings
+        self.settings = Settings(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Create the player
         self.player_group = pygame.sprite.Group()
@@ -92,7 +92,6 @@ class Game:
         self.enemy_collisions = {}  # Dictionary to store enemy collisions
         self.player_collisions = {}  # Dictionary to store player collisions
         self.exp_pickup_collision = {} # Dictionary to store XP Collisions
-
     #endregion
     
     #region #### GAME METHODS ####
@@ -132,12 +131,11 @@ class Game:
             if event.type == enemyHit:
                 for bullet, enemies in self.enemy_collisions.items():
                     for enemy in enemies:
-                        enemy.take_damage(self.player.weapon.damage)
-                        if enemy.current_health <= 0:
-                            self.settings.score += 1
+                        death = enemy.take_damage(self.player.weapon.damage)
+                        if death:
+                            self.settings.score += enemy.score_value
                             exp_coin = EXPCoin(enemy.rect.centerx, enemy.rect.centery)
                             self.exp_coins_sprites.add(exp_coin)
-                            enemy.kill()
                 self.enemy_hit = False
                 self.enemy_collisions = {}
             # Handle Player Hit
@@ -203,6 +201,7 @@ class Game:
         self.bullet_sprites.draw(self.screen)
 
         # Draw Exp Coins
+        self.exp_coins_sprites.update(self.player.rect.centerx, self.player.rect.centery)
         self.exp_coins_sprites.draw(self.screen)
 
         for bullet in self.bullet_sprites:
@@ -274,12 +273,7 @@ class Game:
                 if pause_restart_choice == "restart":
                     initialize_game(self)
                     return "restart"
-
-                
-
-
     #endregion
-    
     #endregion
 #endregion
 

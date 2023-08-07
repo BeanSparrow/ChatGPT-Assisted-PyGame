@@ -11,7 +11,7 @@ class HealthBar:
         self.max_health = player.max_health  # Assuming player has a max_health attribute
 
         # Calculate the font size based on the height of the health bar
-        self.font_size = min(self.width // 4, self.height // 2)
+        self.font_size = min(self.width // 2, self.height)
         self.font = pygame.font.Font(None, self.font_size)
 
     def draw(self):
@@ -28,5 +28,5 @@ class HealthBar:
         health_text = f"{self.player.health} / {self.max_health}"
         text_surface = self.font.render(health_text, True, (0, 0, 0))  # Black color
         text_x = self.x + self.width // 2 - text_surface.get_width() // 2
-        text_y = self.y - text_surface.get_height() - 5
+        text_y = self.y - text_surface.get_height() + self.height - 5
         self.screen.blit(text_surface, (text_x, text_y))
