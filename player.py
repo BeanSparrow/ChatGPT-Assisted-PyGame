@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
         self.began_moving = False  # Flag to track if the player is moving
 
     def update(self):
-        self.health_bar.health_bar_draw(self.current_health, self.max_health, self.health_target)
+        self.current_health = self.health_bar.health_bar_draw(self.current_health, self.max_health, self.health_target)
         self.exp_bar.experience_bar_draw(self.experience)
   
     def move(self, dx, dy):
