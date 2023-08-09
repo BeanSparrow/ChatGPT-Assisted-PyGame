@@ -4,23 +4,27 @@ import pygame
 import sys
 import math
 import random
-from player import Player
-from enemy import Enemy
-from exp_coin import EXPCoin
-from modifiers import Modifiers
-from menus import create_main_menu
-from menus import create_weapon_selection_menu
-from menus import show_game_over_screen
-from menus import show_pause_menu
-from hud import draw_score
-from hud import draw_timer
-from settings import Settings
+from modules.player import Player
+from modules.enemy import Enemy
+from modules.exp_coin import EXPCoin
+from modules.modifiers import Modifiers
+from modules.menus import create_main_menu
+from modules.menus import create_weapon_selection_menu
+from modules.menus import show_game_over_screen
+from modules.menus import show_pause_menu
+from modules.hud import draw_score
+from modules.hud import draw_timer
+from modules.settings import Settings
 #endregion
 
 #region #### PYGAME INITIALIZE ####
 # Initialize Pygame
 pygame.init()
 
+# Check if there are any joysticks
+if pygame.joystick.get_count() > 0:
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
 
 def initialize_game(game):
     # Reset player and enemy states
@@ -155,28 +159,56 @@ class Game:
                         player.gain_exp()
                 self.player_gained_exp = False
                 self.exp_pickup_collision = {}
+            # Joystick Buttons Events
+            if pygame.joystick.get_count() > 0:
+                if event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 3:
+                        self.player.use_potion()
+                    if event.button == 7:
+                        self.settings.paused = not self.settings.paused  # Toggle the pause state
+                        #pygame.mouse.set_visible(not pygame.mouse.get_visible()) # Make Mouse Visible during Pause menu
+                        self.settings.last_pause_time = current_time  # Update the last key time
 
         # Keyboard input handling
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE] and current_time - self.settings.last_pause_time >= self.settings.pause_cooldown:
-            self.settings.paused = not self.settings.paused  # Toggle the pause state
-            pygame.mouse.set_visible(not pygame.mouse.get_visible()) # Make Mouse Visible during Pause menu
-            self.settings.last_pause_time = current_time  # Update the last key time
-        if keys[pygame.K_w]:
-            self.player.move(0, -self.player.speed)
-        if keys[pygame.K_s]:
-            self.player.move(0, self.player.speed)
-        if keys[pygame.K_a]:
-            self.player.move(-self.player.speed, 0)
-        if keys[pygame.K_d]:
-            self.player.move(self.player.speed, 0)
+        # Keyboard input Handling
+        if pygame.joystick.get_count() == 0:
+            if keys[pygame.K_ESCAPE] and current_time - self.settings.last_pause_time >= self.settings.pause_cooldown:
+                self.settings.paused = not self.settings.paused  # Toggle the pause state
+                #pygame.mouse.set_visible(not pygame.mouse.get_visible()) # Make Mouse Visible during Pause menu
+                self.settings.last_pause_time = current_time  # Update the last key time
+            if keys[pygame.K_w]:
+                self.player.move(0, -self.player.speed)
+            if keys[pygame.K_s]:
+                self.player.move(0, self.player.speed)
+            if keys[pygame.K_a]:
+                self.player.move(-self.player.speed, 0)
+            if keys[pygame.K_d]:
+                self.player.move(self.player.speed, 0)
+            if keys[pygame.K_1]:
+                self.player.use_potion()
+
+        # JoyStick Input Handling
+        if pygame.joystick.get_count() > 0:
+            x_axis = joystick.get_axis(0)
+            y_axis = joystick.get_axis(1)
+            if x_axis > 0.3:
+                self.player.move(self.player.speed, 0)
+            if x_axis < -0.3:
+                self.player.move(-self.player.speed, 0)
+            if y_axis > 0.3:
+                self.player.move(0, self.player.speed)
+            if y_axis < -0.3:
+                self.player.move(0, -self.player.speed)
+        
         # Debugging Events
         if keys[pygame.K_1]:
             self.player.use_potion()
         if keys[pygame.K_2]:
             self.player.take_damage(10)
         if keys[pygame.K_3]:
-            print(self.player.experience)
+            crosshair_x, crosshair_y = self.player.crosshair.get_crosshair_x_y(self.player.rect.centerx, self.player.rect.centery)
+            print("Crosshair: ", crosshair_x, crosshair_y)
 
     def quit_game(self):
         pygame.quit()
@@ -227,9 +259,12 @@ class Game:
         draw_timer(game)
 
     def fireBulletUpdate(self):
-        # Fire bullets only when the player is moving
+        dx, dy = self.player.crosshair.get_crosshair_dx_dy(self.player.rect.centerx, self.player.rect.centery)
+        direction = (dx, dy)
+
+        # Fire bullets only when the player has started moving
         if self.player.began_moving:
-            bullets = self.player.weapon.fire(self.player.rect.centerx, self.player.rect.centery, self.player.direction)
+            bullets = self.player.weapon.fire(self.player.rect.centerx, self.player.rect.centery, direction)
             for bullet in bullets:
                 self.bullet_sprites.add(bullet)
 
@@ -295,10 +330,10 @@ if __name__ == "__main__":
         # If the player selects "Play Game," start the game loop
         if play == "play":
             while True:
-                pygame.mouse.set_visible(True)
+                #pygame.mouse.set_visible(True)
                 weapon = create_weapon_selection_menu(game)
                 if weapon != "back":
-                    pygame.mouse.set_visible(False)
+                    #pygame.mouse.set_visible(False)
                     game.player.set_weapon(weapon)
                     result = game.game_loop()
                     if result != "restart":

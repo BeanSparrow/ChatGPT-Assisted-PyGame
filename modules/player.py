@@ -1,11 +1,12 @@
 import pygame
-from weapon import Weapon
-from weapon import Pistol
-from weapon import MachineGun
-from weapon import Shotgun
-from exp_bar import EXPBar
-from health_bar import HealthBar
-from potion import Potion
+from .player_modules.weapon import Weapon
+from .player_modules.weapon import Pistol
+from .player_modules.weapon import MachineGun
+from .player_modules.weapon import Shotgun
+from .player_modules.exp_bar import EXPBar
+from .player_modules.health_bar import HealthBar
+from .player_modules.crosshair import Crosshair
+from .player_modules.potion import Potion
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, screen, modifiers):
@@ -22,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         
         # Screen Settings
         self.screen = screen
-        
+
         # Player Weapon Choice
         self.weapon = Pistol()
 
@@ -40,6 +41,9 @@ class Player(pygame.sprite.Sprite):
         self.potion_group = pygame.sprite.Group()
         self.potion = Potion(self.screen, self.exp_bar.bar_height)
         self.potion_group.add(self.potion)
+
+        # Crosshair
+        self.crosshair = Crosshair(self.screen)
 
         # Player Sprite
         self.picture_path = "Assets\Img\Player\player_test.png"
@@ -63,6 +67,7 @@ class Player(pygame.sprite.Sprite):
         self.exp_bar.experience_bar_draw(self.experience)
         self.potion_group.draw(self.screen)
         self.potion_group.update()
+        self.crosshair.crosshair_draw(self.rect.centerx, self.rect.centery)
   
     def move(self, dx, dy):
         # Calculate the new positions for each point of the triangle

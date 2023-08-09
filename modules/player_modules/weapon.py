@@ -2,7 +2,7 @@
 
 import math
 import random
-from bullet import Bullet
+from ..bullet import Bullet
 
 class Weapon:
     def __init__(self):
@@ -37,9 +37,9 @@ class MachineGun(Weapon):
         self.damage = 1
         self.bullet_count = 1  # Number of bullets to fire
         self.spread_angle = 0  # Angle of spread in degrees
-        self.bullet_distance = 300
+        self.bullet_distance = 1000
         self.size = 5
-        self.speed = 5
+        self.speed = 10
 
     # def fire(self, x, y, direction):
     #     # Implementation for firing a bullet as a Machine Gun

@@ -2,17 +2,26 @@ import pygame
 import sys
 
 def create_main_menu(self):
+        
+        background_image = pygame.image.load("Assets\Img\Title Screen\\title_screen2.png")
+        title_image = pygame.image.load("Assets\Img\Title Screen\\title 1.png")
         # Main menu loop
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit_game()
 
-            self.screen.fill((128, 128, 128))
+            self.screen.fill((0, 0, 0))
+
+            # Draw the background image
+            self.screen.blit(background_image, (self.settings.screen_width // 2 - background_image.get_width() //2, self.settings.screen_height // 2 - background_image.get_height() // 2))
+
+            # Draw the title image
+            self.screen.blit(title_image, (self.settings.screen_width / 2 - title_image.get_width() // 2, self.settings.screen_height // 5 - title_image.get_height() // 2))
 
             # Draw the main menu buttons
-            play_button_rect = pygame.Rect(self.settings.screen_width / 2, (self.settings.screen_height / 2) - 100, 200, 50)
-            quit_button_rect = pygame.Rect(self.settings.screen_width / 2, (self.settings.screen_height / 2) + 100, 200, 50)
+            play_button_rect = pygame.Rect((self.settings.screen_width // 7) * 4, (self.settings.screen_height / 2) - 100, 200, 50)
+            quit_button_rect = pygame.Rect((self.settings.screen_width // 7) * 4, (self.settings.screen_height / 2) + 50, 200, 50)
 
             pygame.draw.rect(self.screen, (0, 255, 0), play_button_rect)
             pygame.draw.rect(self.screen, (255, 0, 0), quit_button_rect)
@@ -37,12 +46,22 @@ def create_main_menu(self):
 
 def create_weapon_selection_menu(self):
     # Weapon selection menu loop
+    background_image = pygame.image.load("Assets\Img\Title Screen\\title_screen2.png")
+    title_image = pygame.image.load("Assets\Img\Title Screen\\title 1.png")
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit_game()
 
-        self.screen.fill((128, 128, 128))
+        self.screen.fill((0, 0, 0))
+
+        # Draw the background image
+        self.screen.blit(background_image, (self.settings.screen_width // 2 - background_image.get_width() //2, self.settings.screen_height // 2 - background_image.get_height() // 2))
+
+        # Draw the title image
+        self.screen.blit(title_image, (self.settings.screen_width / 2 - title_image.get_width() // 2, self.settings.screen_height // 5 - title_image.get_height() // 2))
+
 
         # Draw the weapon selection buttons
         pistol_button_rect = pygame.Rect(self.settings.screen_width / 3, (self.settings.screen_height / 3) - 100, 200, 50)
