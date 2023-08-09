@@ -21,6 +21,7 @@ from settings import Settings
 # Initialize Pygame
 pygame.init()
 
+
 def initialize_game(game):
     # Reset player and enemy states
     game.player.reset()
@@ -159,6 +160,7 @@ class Game:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE] and current_time - self.settings.last_pause_time >= self.settings.pause_cooldown:
             self.settings.paused = not self.settings.paused  # Toggle the pause state
+            pygame.mouse.set_visible(not pygame.mouse.get_visible()) # Make Mouse Visible during Pause menu
             self.settings.last_pause_time = current_time  # Update the last key time
         if keys[pygame.K_w]:
             self.player.move(0, -self.player.speed)
@@ -170,7 +172,7 @@ class Game:
             self.player.move(self.player.speed, 0)
         # Debugging Events
         if keys[pygame.K_1]:
-            self.player.get_heal(10)
+            self.player.use_potion()
         if keys[pygame.K_2]:
             self.player.take_damage(10)
         if keys[pygame.K_3]:
@@ -293,8 +295,10 @@ if __name__ == "__main__":
         # If the player selects "Play Game," start the game loop
         if play == "play":
             while True:
+                pygame.mouse.set_visible(True)
                 weapon = create_weapon_selection_menu(game)
                 if weapon != "back":
+                    pygame.mouse.set_visible(False)
                     game.player.set_weapon(weapon)
                     result = game.game_loop()
                     if result != "restart":

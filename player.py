@@ -61,8 +61,8 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.current_health = self.health_bar.health_bar_draw(self.current_health, self.max_health, self.health_target)
         self.exp_bar.experience_bar_draw(self.experience)
-        self.potion_group.update()
         self.potion_group.draw(self.screen)
+        self.potion_group.update()
   
     def move(self, dx, dy):
         # Calculate the new positions for each point of the triangle
@@ -103,11 +103,13 @@ class Player(pygame.sprite.Sprite):
             self.health_target= 0
             self.is_dead = True
     
-    def get_heal(self, amount):
-        if self.health_target< self.max_health:
-            self.health_target+= amount
-        if self.health_target> self.max_health:
-            self.health_target= self.max_health
+    def use_potion(self):
+        potion_use = self.potion.trigger()
+        if potion_use:
+            if self.health_target< self.max_health:
+                self.health_target+= self.potion.heal_ammount
+            if self.health_target> self.max_health:
+                self.health_target= self.max_health
 
     def reset(self):
         self.health = self.max_health
