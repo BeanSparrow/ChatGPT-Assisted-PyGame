@@ -7,6 +7,7 @@ import random
 from player import Player
 from enemy import Enemy
 from exp_coin import EXPCoin
+from modifiers import Modifiers
 from menus import create_main_menu
 from menus import create_weapon_selection_menu
 from menus import show_game_over_screen
@@ -63,9 +64,12 @@ class Game:
         # Creating Settings
         self.settings = Settings(SCREEN_WIDTH, SCREEN_HEIGHT)
 
+        # Power Ups
+        self.modifiers = Modifiers()
+
         # Create the player
         self.player_group = pygame.sprite.Group()
-        self.player = Player(self.settings.screen_width, self.settings.screen_height, self.screen)
+        self.player = Player(self.settings.screen_width, self.settings.screen_height, self.screen, self.modifiers)
         self.player_group.add(self.player)
 
         # Store Enemies
@@ -147,7 +151,7 @@ class Game:
                 for player, exp_coins in self.exp_pickup_collision.items():
                     for exp in exp_coins:
                         exp.kill()
-                        player.experience += 1
+                        player.gain_exp()
                 self.player_gained_exp = False
                 self.exp_pickup_collision = {}
 

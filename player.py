@@ -5,19 +5,29 @@ from weapon import MachineGun
 from weapon import Shotgun
 from exp_bar import EXPBar
 from health_bar import HealthBar
+from potion import Potion
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, screen):
+    def __init__(self, screen_width, screen_height, screen, modifiers):
         super().__init__()
+        #Modifiers
+        self.modifiers = modifiers
+
         # Player Stats
         self.size = 60
         self.experience = 0
-        self.max_health = 100
+        self.max_health = 100 + self.modifiers.player_max_health
         self.current_health = 100
-        self.speed = 5
-        self.is_dead = False
+        self.speed = 5 * self.modifiers.player_speed
+        
+        # Screen Settings
         self.screen = screen
+        
+        # Player Weapon Choice
         self.weapon = Pistol()
+
+        # Player Death Flag
+        self.is_dead = False
 
         # Experience Bar
         self.exp_bar = EXPBar(self.screen)
@@ -25,6 +35,11 @@ class Player(pygame.sprite.Sprite):
         # Health Bar
         self.health_bar = HealthBar(self.screen, self.exp_bar.bar_height)
         self.health_target = 100
+ 
+        # Potion
+        self.potion_group = pygame.sprite.Group()
+        self.potion = Potion(self.screen, self.exp_bar.bar_height)
+        self.potion_group.add(self.potion)
 
         # Player Sprite
         self.picture_path = "Assets\Img\Player\player_test.png"
@@ -46,6 +61,8 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.current_health = self.health_bar.health_bar_draw(self.current_health, self.max_health, self.health_target)
         self.exp_bar.experience_bar_draw(self.experience)
+        self.potion_group.update()
+        self.potion_group.draw(self.screen)
   
     def move(self, dx, dy):
         # Calculate the new positions for each point of the triangle
@@ -75,6 +92,9 @@ class Player(pygame.sprite.Sprite):
             self.weapon = MachineGun()
         elif weapon == "Shotgun":
             self.weapon = Shotgun()
+    
+    def gain_exp(self):
+        self.experience += 1 * self.modifiers.exp_increase
 
     def take_damage(self, amount):
         if self.health_target> 0:
