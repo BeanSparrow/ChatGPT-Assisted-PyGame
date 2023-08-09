@@ -7,7 +7,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         
         # Enemy Stats
-        self.size = 60
+        self.size = 80
         self.radius = self.size // 2
         self.speed = 1
         self.current_health = 20

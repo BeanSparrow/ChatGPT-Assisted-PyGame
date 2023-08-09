@@ -1,3 +1,44 @@
+Robopocalypse
+
+Description:
+
+In a post-apocalyptic world where humans once thrived, rogue artificial intelligence has taken control. 
+The once helpful robots, now corrupted by a malevolent AI, roam the desolate streets, hunting the last remnants of humanity. 
+In Robopocalypse, you play as one of the final human survivors, a skilled engineer with a knack for turning destruction into creation.
+
+Game Features:
+
+ - Roguelite Mechanics: Every playthrough is unique. With procedurally generated maps and randomized robot spawn points, no two games are alike.
+And with permadeath, every decision counts.
+
+ - Horde Survival: Waves of robots increase in difficulty with each passing round. From nimble scout bots to towering mechs, every wave presents a new challenge.
+
+ - Salvage to Survive: After defeating enemy robots, scavenge their wreckage to find valuable components. 
+Use these parts to upgrade your weapons, craft new tools, or build defensive structures. (EXP System using Robot Parts)
+
+ - Dynamic Upgrades: Unlock a diverse range of weapon mods and tech blueprints. From laser rifles to electromagnetic pulse grenades, 
+design a loadout that fits your playstyle. (Rewards System)
+
+ - (X) Base Defense: As the nights grow darker and the robot hordes grow fiercer, fortify your stronghold. Set up turrets, lay mines, 
+and deploy drone allies to help defend against the onslaught.
+
+ - Mysterious Story: Uncover the cause of the robot uprising as you delve deeper into the game. 
+Hints scattered throughout the world help piece together the tragic tale of humanity's fall and the rise of the machines.
+
+ - Stunning Visuals: Experience a bleak yet beautiful world, from the ruins of once-majestic cities to the eerie quiet of abandoned factories, 
+all rendered in exquisite detail.
+
+ - (X)Adaptive AI: Robots learn from your tactics, forcing you to constantly evolve your strategy. The AI adapts to your playstyle, 
+making every round a fresh challenge.
+
+ - Multiplayer Mode: Team up with friends or players from around the world. Work together to fend off the robotic horde, share resources, 
+and strategize the best ways to survive the night. (Would love to have this)
+
+ - Leaderboards: Compete against players globally to see who can survive the longest, earn the most points, or take down the toughest robots.
+
+Survive. Adapt. Overcome. In Robopocalypse, the fate of humanity rests in your hands. 
+Every piece of scrap is a potential lifeline, every decision a step closer to reclaiming the world. How long can you withstand the rise of the machines?
+
 Player PowerUps
 
 Player Stats

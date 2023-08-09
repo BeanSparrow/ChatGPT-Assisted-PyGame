@@ -1,13 +1,13 @@
 import pygame
 import math
 
-class EXPCoin(pygame.sprite.Sprite):
+class Scrap(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         
         # Enemy Stats
-        self.picture_path = "Assets\Img\Experience\XP_coin.png"
-        self.size = 30
+        self.picture_path = "Assets\Img\Robot_Scrap\\robot_scrap_2.png"
+        self.size = 60
         self.x = x
         self.y = y
         self.speed = 10

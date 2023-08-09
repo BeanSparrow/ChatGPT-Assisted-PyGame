@@ -6,7 +6,7 @@ import math
 import random
 from modules.player import Player
 from modules.enemy import Enemy
-from modules.exp_coin import EXPCoin
+from modules.scrap import Scrap
 from modules.modifiers import Modifiers
 from modules.menus import create_main_menu
 from modules.menus import create_weapon_selection_menu
@@ -31,7 +31,7 @@ def initialize_game(game):
     game.player.reset()
     game.enemy_sprites.empty()
     game.bullet_sprites.empty()
-    game.exp_coins_sprites.empty()
+    game.scrap_sprites.empty()
     game.settings.score = 0
     game.settings.game_over_condition = False
     game.settings.total_game_time = 0
@@ -44,7 +44,7 @@ def initialize_game(game):
 playerDeath = pygame.USEREVENT + 1
 enemyHit = pygame.USEREVENT + 2
 playerHit = pygame.USEREVENT + 3
-expPickup = pygame.USEREVENT +  4
+scrapPickup = pygame.USEREVENT +  4
 #endregion
 
 #region #### GLOBAL SETTINGS ####
@@ -83,8 +83,8 @@ class Game:
         # Store Bullets
         self.bullet_sprites = pygame.sprite.Group()
 
-        # Store Exp Coins
-        self.exp_coins_sprites = pygame.sprite.Group()
+        # Store scrap
+        self.scrap_sprites = pygame.sprite.Group()
 
         # Timer for auto-firing bullets
         self.fire_timer = 0
@@ -93,10 +93,10 @@ class Game:
         # Collision Event
         self.enemy_hit = False
         self.player_hit = False
-        self.player_gained_exp = False
+        self.player_gained_scrap = False
         self.enemy_collisions = {}  # Dictionary to store enemy collisions
         self.player_collisions = {}  # Dictionary to store player collisions
-        self.exp_pickup_collision = {} # Dictionary to store XP Collisions
+        self.scrap_pickup_collision = {} # Dictionary to store XP Collisions
     #endregion
     
     #region #### GAME METHODS ####
@@ -118,8 +118,8 @@ class Game:
             pygame.event.post(pygame.event.Event(enemyHit))
         if self.player_hit:
             pygame.event.post(pygame.event.Event(playerHit))
-        if self.player_gained_exp:
-            pygame.event.post(pygame.event.Event(expPickup))
+        if self.player_gained_scrap:
+            pygame.event.post(pygame.event.Event(scrapPickup))
         
         # Get Current Time
         current_time = pygame.time.get_ticks()
@@ -139,8 +139,8 @@ class Game:
                         death = enemy.take_damage(self.player.weapon.damage)
                         if death:
                             self.settings.score += enemy.score_value
-                            exp_coin = EXPCoin(enemy.rect.centerx, enemy.rect.centery)
-                            self.exp_coins_sprites.add(exp_coin)
+                            scrap = Scrap(enemy.rect.centerx, enemy.rect.centery)
+                            self.scrap_sprites.add(scrap)
                 self.enemy_hit = False
                 self.enemy_collisions = {}
             # Handle Player Hit
@@ -151,14 +151,14 @@ class Game:
                         enemy.kill()
                 self.player_hit = False
                 self.player_collisions = {}
-            # Handle EXP Pickup
-            if event.type == expPickup:
-                for player, exp_coins in self.exp_pickup_collision.items():
-                    for exp in exp_coins:
-                        exp.kill()
-                        player.gain_exp()
-                self.player_gained_exp = False
-                self.exp_pickup_collision = {}
+            # Handle Scrap Pickup
+            if event.type == scrapPickup:
+                for player, scraps in self.scrap_pickup_collision.items():
+                    for scrap in scraps:
+                        scrap.kill()
+                        player.gain_scrap()
+                self.player_gained_scrap = False
+                self.scrap_pickup_collision = {}
             # Joystick Buttons Events
             if pygame.joystick.get_count() > 0:
                 if event.type == pygame.JOYBUTTONDOWN:
@@ -172,11 +172,11 @@ class Game:
         # Keyboard input handling
         keys = pygame.key.get_pressed()
         # Keyboard input Handling
-        if pygame.joystick.get_count() == 0:
-            if keys[pygame.K_ESCAPE] and current_time - self.settings.last_pause_time >= self.settings.pause_cooldown:
+        if keys[pygame.K_ESCAPE] and current_time - self.settings.last_pause_time >= self.settings.pause_cooldown:
                 self.settings.paused = not self.settings.paused  # Toggle the pause state
                 #pygame.mouse.set_visible(not pygame.mouse.get_visible()) # Make Mouse Visible during Pause menu
                 self.settings.last_pause_time = current_time  # Update the last key time
+        if pygame.joystick.get_count() == 0:
             if keys[pygame.K_w]:
                 self.player.move(0, -self.player.speed)
             if keys[pygame.K_s]:
@@ -227,10 +227,10 @@ class Game:
             self.player_hit = True
             self.player_collisions = player_collision
 
-        exp_pickup_collision = pygame.sprite.groupcollide(self.player_group, self.exp_coins_sprites, False, False)
-        if exp_pickup_collision:
-            self.player_gained_exp = True
-            self.exp_pickup_collision = exp_pickup_collision
+        scrap_pickup_collision = pygame.sprite.groupcollide(self.player_group, self.scrap_sprites, False, False)
+        if scrap_pickup_collision:
+            self.player_gained_scrap = True
+            self.scrap_pickup_collision = scrap_pickup_collision
     #endregion
     
     #region #### UPDATES ####
@@ -243,9 +243,9 @@ class Game:
         self.bullet_sprites.update()
         self.bullet_sprites.draw(self.screen)
 
-        # Draw Exp Coins
-        self.exp_coins_sprites.update(self.player.rect.centerx, self.player.rect.centery)
-        self.exp_coins_sprites.draw(self.screen)
+        # Draw Scrap
+        self.scrap_sprites.update(self.player.rect.centerx, self.player.rect.centery)
+        self.scrap_sprites.draw(self.screen)
 
         for bullet in self.bullet_sprites:
             if bullet.distance_traveled >= bullet.max_distance:

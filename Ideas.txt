@@ -2,8 +2,6 @@ Levels (Scales Enemies)
 
 Rewards (Scales Player or Bullets)
 
-Weapon Class (Changes Bullet Functionality)
-
 Add Pierce as a stat to weapons to pass to bullet
 
 Stretch goals:
@@ -13,8 +11,4 @@ If Level design:
     Different Obstacles
 
 If Continuous Design:
-    Background to move and the player stays in the center
-    Enemies move closer to player as player moves in their direction
-
-
-Timer in top right
+    Background to move and the player stays in the center (Camera Setting)

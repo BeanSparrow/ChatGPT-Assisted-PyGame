@@ -3,7 +3,7 @@ from .player_modules.weapon import Weapon
 from .player_modules.weapon import Pistol
 from .player_modules.weapon import MachineGun
 from .player_modules.weapon import Shotgun
-from .player_modules.exp_bar import EXPBar
+from .player_modules.scrap_bar import ScrapBar
 from .player_modules.health_bar import HealthBar
 from .player_modules.crosshair import Crosshair
 from .player_modules.potion import Potion
@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
 
         # Player Stats
         self.size = 60
-        self.experience = 0
+        self.scrap_amount = 0
         self.max_health = 100 + self.modifiers.player_max_health
         self.current_health = 100
         self.speed = 5 * self.modifiers.player_speed
@@ -30,16 +30,16 @@ class Player(pygame.sprite.Sprite):
         # Player Death Flag
         self.is_dead = False
 
-        # Experience Bar
-        self.exp_bar = EXPBar(self.screen)
+        # Scrap Bar
+        self.scrap_bar = ScrapBar(self.screen)
 
         # Health Bar
-        self.health_bar = HealthBar(self.screen, self.exp_bar.bar_height)
+        self.health_bar = HealthBar(self.screen, self.scrap_bar.bar_height)
         self.health_target = 100
  
         # Potion
         self.potion_group = pygame.sprite.Group()
-        self.potion = Potion(self.screen, self.exp_bar.bar_height)
+        self.potion = Potion(self.screen, self.scrap_bar.bar_height)
         self.potion_group.add(self.potion)
 
         # Crosshair
@@ -64,7 +64,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self.current_health = self.health_bar.health_bar_draw(self.current_health, self.max_health, self.health_target)
-        self.exp_bar.experience_bar_draw(self.experience)
+        self.scrap_bar.scrap_bar_draw(self.scrap_amount)
         self.potion_group.draw(self.screen)
         self.potion_group.update()
         self.crosshair.crosshair_draw(self.rect.centerx, self.rect.centery)
@@ -98,8 +98,8 @@ class Player(pygame.sprite.Sprite):
         elif weapon == "Shotgun":
             self.weapon = Shotgun()
     
-    def gain_exp(self):
-        self.experience += 1 * self.modifiers.exp_increase
+    def gain_scrap(self):
+        self.scrap_amount += 1 * self.modifiers.scrap_increase
 
     def take_damage(self, amount):
         if self.health_target> 0:
