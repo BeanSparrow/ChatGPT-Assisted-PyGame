@@ -1,8 +1,191 @@
-Levels (Scales Enemies)
+Opening Game Animation:
+ - Built in Python\Pygame
+ - A BeanSparrow Production
 
-Rewards (Scales Player or Bullets)
+Title Screen:
+ - Title Falls from Ceiling Landing in appropriate spot, then buttons become available
+ - Old School Game style
 
-Add Pierce as a stat to weapons to pass to bullet
+
+Game Design:
+    - Levels (Scales Enemies)
+    - Continuous (Time Scales Enemies)
+
+Reward Ideas:
+    - Rewards will scale player, weapon, or enemy stats
+
+Weapon Ideas:
+
+    - EMP Grenade: 
+        - A grenade designed to release a pulse of electromagnetic radiation, which can disable or damage electronic circuits in robots.
+        - Electrical Ranged Weapon type
+        - Thrown specific distance
+        - Explodes a radius around that spot
+
+    - Neural Disruptor: 
+        - A weapon that sends a chaotic burst of signals, potentially confusing robot AI and causing it to malfunction.
+        - Signal Ranged Weapon type
+        - projectile waves at enemy
+        - Any hit are damaged and Stunned (See Stat Ideas)
+
+    - Plasma Cutter: 
+        - A high-energy tool that can slice through the toughest robot armor with ease.
+        - Energy Melee Weapon type
+        - laser slices robots in sweeping area infront of player
+
+    - Quantum Disassembler: 
+        - A weapon that destabilizes atomic structures, turning robot components into dust.
+        - Energy Ranged Weapon type
+        - Beam effect
+
+    - Nano-Swarm: 
+        - Tiny nanobots that, when deployed, can infiltrate robotic systems and dismantle them from the inside out.
+        - Minion Weapon Type
+        - Bots that move to closest enemies and deal damage
+
+    - Ion Beam Rifle: 
+        - A weapon that fires highly charged ions, capable of frying robot circuits upon impact.
+        - Energy Ranged Weapon Type
+        - Single Shot, slow hits 1 enemy deals larger damage.
+
+    - Magnetic Harpoon: 
+        - A weapon that ensnares robots using a strong magnetic pull, rendering them immobile.
+        - Physical Ranged Weapon Type
+        - Fires slow has targeting
+
+    - ElectroPulse Cannon (EPC): 
+        - A weapon that fires a concentrated burst of electromagnetic pulses designed to fry a robot's circuits.
+        - Electrical Range Weapon Type
+        - Short Burst Area Effect
+
+    - Anti-Mech Mines: 
+        - Landmines specifically designed to disable robotic legs or wheels, rendering them immobile.
+        - Trap Weapon Type
+        - Places Mines on the Ground with Area Explosion
+    
+    - Ionized Railgun: 
+        - A high-velocity weapon that shoots ionized projectiles, capable of piercing and short-circuiting even the toughest robot armor.
+        - Physical Ranged Weapon Type
+        - Rapid Fire bullets low damage
+    
+    - Sonic Resonator: 
+        - A gun that emits a high-frequency sound wave that vibrates the mechanical parts of a robot, causing them to break or malfunction.
+
+    Fun\Interesting Complex Ideas:
+        - Temporal Displacer: 
+            - A device that can send robots into a brief time loop, effectively taking them out of the equation for a short while.
+            - Knockback System
+
+        - Holographic Decoy Projector: 
+            - A device that creates life-like holographic projections to distract and confuse robot sensors.
+            - Decoy and Dash System
+
+Stat Ideas:
+    Player Stats:
+        - Health: The character's life points. If it reaches zero, the character might die or become incapacitated.
+            - Health
+        - Agility: Affects movement speed, dodging capability, and might influence attack speed.
+            - Speed, Reload Speed
+        - Luck: Influences random events, loot rarity, or critical hit chances.
+            - Potential System for Effecting rolls for rewards or scrap collection
+        - Armor: The characters protection.  More armor prevents a larger percentage of incoming damage.
+            - Armor, Block, Dodge
+    
+    Weapon Stats:
+        - Damage: The amount of harm a weapon can deal.
+        - Range: How far a weapon can effectively reach or shoot.
+        - Fire Rate: How fast a weapon can shoot or be used in succession.
+        - Accuracy: The likelihood of a weapon hitting its intended target.
+        - Reload Time: How long it takes to reload or prepare the weapon for the next use.
+        - Ammo Capacity: How many rounds/bullets/arrows a weapon can hold.
+        - Pierce: How many enemies a bullet can hit before disappearing.
+    
+    Survival Stats (Good Idea, Not currently planning to implement):
+        - Hunger & Thirst: Track the need for food and water.
+        - Fatigue: Indicates the need for rest or sleep.
+        - Morale: The character's mental state, which can affect performance.
+        - Temperature: Monitoring body temperature in various environmental conditions.
+        - Infection Level: In case of injuries, bites, or exposure to elements.
+    
+    Skill Stats (Good Idea, Not currently planning to implement):
+        - Crafting Skill: Determines the quality and speed of creating tools, weapons, or other useful items.
+        - Stealth: How well the character can avoid detection.
+        - Medicine: Efficiency in treating wounds, making remedies, or identifying herbs.
+        - Weapon Proficiency: Mastery in certain types of weapons, leading to better performance.
+            - This could be used as a reward modifier that enhances weapon damage.
+    
+    Miscellaneous Stats:
+        - Kills: Number of enemies defeated.
+            - Simple Counter
+        - Distance Traveled: How far the character has journeyed.
+            - Derived from player movement
+        - Loot Collected: Amount and rarity of items gathered.
+            - No plans to implement currently
+        - Days Survived: How long the character has lasted against the horde.
+            - Factor of time survived
+        - Base Defense: If there's a base-building aspect, this can track its robustness against attacks.
+            - (Interesting Idea for secondary gameplay loop)
+
+Enemy Ailment Ideas:
+
+    - EMP Shock:
+        - Weaponry: ElectroPulse Cannon, EMP grenades.
+        - Health: Causes moderate damage over time as internal circuits fry.
+        - Movement: Reduces speed by 50% due to electrical interference.
+        - Damage: Reduces attack power by 30% as energy pathways are disrupted.
+        - Armor: No direct impact.
+    - Plasma Burn:
+        - Weaponry: Plasma rifles, plasma grenades.
+        - Health: Causes high initial damage and continuous burn damage over time.
+        - Movement: Reduces speed due to overheated parts.
+        - Damage: Weapons might malfunction, reducing damage by 40%.
+        - Armor: Melts and reduces armor rating by 50%.
+    - Nanite Corrosion:
+        - Weaponry: Nanobot canisters, nanite-infused bullets.
+        - Health: Slow but continuous damage over time as nanites consume the robot from inside.
+        - Movement: Gradual reduction in speed as joints and mechanisms are corroded.
+        - Damage: Gradual reduction in attack power as weaponry is consumed.
+        - Armor: Armor integrity decreases over time.
+    - Quantum Disruption:
+        - Armor: Creates holes, reducing armor rating.
+        - Weaponry: Quantum disruptor beams, quantum mines.
+        - Health: Causes random bursts of damage due to unpredictable quantum states.
+        - Movement: Speed becomes erratic; robot might suddenly halt or speed up.
+        - Damage: Attack power fluctuates randomly.
+        - Armor: Armor phases in and out, reducing its effectiveness by 40%.
+    - Sonic Resonance:
+        - Weaponry: Sonic resonator guns, sonic grenades.
+        - Health: Continuous damage over time as internal components vibrate and break.
+        - Movement: Reduced speed due to destabilized components.
+        - Damage: Reduced attack power due to misalignment of weaponry.
+        - Armor: Armor might crack, reducing its effectiveness by 30%.
+    - Magnetic Trap:
+        - Weaponry: Magnetic net launchers, magnetic mines.
+        - Health: No direct impact.
+        - Movement: Immobilizes the robot or drastically reduces speed.
+        - Damage: Weapons might misfire or be pulled towards the magnetic source.
+        - Armor: No direct impact but can pull the robot into other hazards.
+    - Ion Discharge:
+        - Weaponry: Ion guns, ion blades.
+        - Health: Causes high initial damage.
+        - Movement: Overcharges the robot, causing erratic movement.
+        - Damage: Overcharges weapons, causing them to misfire or explode.
+        - Armor: Ionization might cause armor to become brittle, reducing its effectiveness by 20%.
+    - Laser Perforation:
+        - Weaponry: Laser rifles, laser turrets.
+        - Health: High puncture damage on impact.
+        - Movement: Precision hits can disable limbs, reducing speed.
+        - Damage: Precision hits can disable weaponry.
+    - Rust/Corrosion:
+        - Effect: Reduces the robot's agility and might cause joints to lock up or seize.
+        - Cause: Chemical attacks, exposure to corrosive environments, or neglect.
+    - Jamming:
+        - Effect: Prevents robots from communicating with each other, making coordinated attacks more difficult.
+        - Cause: Signal jamming devices, electronic warfare, or interference.
+    - Feedback Loop:
+        - Effect: Robot's sensors get overloaded, causing disorientation or self-inflicted damage.
+        - Cause: Sonic weapons, high-pitched frequencies, or electronic feedback.
+
 
 Stretch goals:
 

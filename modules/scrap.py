@@ -7,7 +7,7 @@ class Scrap(pygame.sprite.Sprite):
         
         # Enemy Stats
         self.picture_path = "Assets\Img\Robot_Scrap\\robot_scrap_2.png"
-        self.size = 60
+        self.size = 40
         self.x = x
         self.y = y
         self.speed = 10

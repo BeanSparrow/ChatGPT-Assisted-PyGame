@@ -8,8 +8,8 @@ class Crosshair:
         self.radius = self.screen.get_width() // 20
         self.image = pygame.image.load("Assets\Img\Crosshair\crosshair_style1.png")
         self.image = pygame.transform.scale(self.image, (self.size, self.size)).convert_alpha()
-        self.last_crosshair_dx = 0
-        self.last_crosshair_dy = 0
+        self.last_crosshair_dx = 1
+        self.last_crosshair_dy = 1
     
     def get_crosshair_dx_dy(self, playerx, playery):
         # Check for Joystick
