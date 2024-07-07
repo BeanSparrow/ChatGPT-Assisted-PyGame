@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.modifiers = modifiers
 
         # Player Stats
-        self.size = 60
+        self.size = 80
         self.scrap_amount = 0
         self.max_health = 100 + self.modifiers.player_max_health
         self.current_health = 100
